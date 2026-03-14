@@ -3,46 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A10m Application</title>
+    <title>A10m App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #121212; color: white; padding: 15px; margin: 0; }
-        h2 { text-align: center; margin-bottom: 5px; color: #fff; }
-        .warning { color: #ff4d4d; font-style: italic; font-size: 14px; text-align: center; margin-bottom: 20px; display: block; }
+        body { font-family: sans-serif; background-color: #121212; color: white; padding: 15px; margin: 0; }
+        h2 { text-align: center; margin-bottom: 5px; }
+        .warning { color: #ff4d4d; font-style: italic; font-size: 14px; text-align: center; display: block; margin-bottom: 15px; }
         
-        .input-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-size: 13px; color: #bbb; }
-        input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #333; background: #1e1e1e; color: white; box-sizing: border-box; outline: none; }
+        .input-group { margin-bottom: 12px; }
+        label { display: block; margin-bottom: 5px; font-size: 13px; color: #aaa; }
+        input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #1e1e1e; color: white; box-sizing: border-box; outline: none; }
         input:focus { border-color: #0088cc; }
 
-        /* Звания картинками */
-        .rank-title { font-size: 14px; color: #bbb; margin-bottom: 10px; }
-        .rank-row { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 20px; }
-        .rank-card { flex: 1; background: #1e1e1e; border: 2px solid #333; border-radius: 10px; padding: 5px; cursor: pointer; transition: 0.2s; text-align: center; }
-        .rank-card img { width: 100%; max-width: 40px; display: block; margin: 0 auto; }
-        .rank-card.active { border-color: #0088cc; background: #0088cc33; }
+        /* Сетка для 9 званий */
+        .rank-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 20px; }
+        .rank-item { background: #1e1e1e; border: 2px solid #333; border-radius: 8px; padding: 5px; cursor: pointer; text-align: center; transition: 0.2s; }
+        .rank-item img { width: 100%; height: auto; display: block; }
+        .rank-item.active { border-color: #0088cc; background: #0088cc33; }
 
         /* Кнопки Да/Нет */
-        .toggle-label { font-size: 14px; color: #bbb; margin-bottom: 8px; display: block; }
         .toggle-group { display: flex; gap: 10px; margin-bottom: 15px; }
-        .btn-toggle { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #333; background: #1e1e1e; color: white; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .btn-toggle { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #1e1e1e; color: white; cursor: pointer; font-weight: bold; }
         .btn-toggle.active-yes { background: #28a745; border-color: #28a745; }
         .btn-toggle.active-no { background: #dc3545; border-color: #dc3545; }
 
         #send_btn { 
             width: 100%; padding: 16px; background: #0088cc; color: white; border: none; 
-            border-radius: 12px; font-weight: bold; font-size: 18px; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            border-radius: 12px; font-weight: bold; font-size: 18px; cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-    <h2>Заявка в клан [A10m]</h2>
+    <h2>Заявка в [A10m]</h2>
     <span class="warning">Предупреждение: за обман - бот вас кинет в Черный Список</span>
 
     <div class="input-group">
         <label>Имя и Фамилия</label>
-        <input type="text" id="full_name" placeholder="Например: Иван Иванов">
+        <input type="text" id="full_name" placeholder="Иван Иванов">
     </div>
     
     <div class="input-group">
@@ -55,25 +53,29 @@
         <input type="number" id="age" placeholder="15">
     </div>
 
-    <div class="rank-title">Твое максимальное звание за 10 сезон:</div>
-    <div class="rank-row" id="rank_box">
-        <div class="rank-card" onclick="selectRank(this, 'Silver')"><img src="https://cdn-icons-png.flaticon.com/512/6022/6022450.png"></div>
-        <div class="rank-card" onclick="selectRank(this, 'Gold')"><img src="https://cdn-icons-png.flaticon.com/512/6022/6022452.png"></div>
-        <div class="rank-card" onclick="selectRank(this, 'Platinum')"><img src="https://cdn-icons-png.flaticon.com/512/6022/6022454.png"></div>
-        <div class="rank-card" onclick="selectRank(this, 'Elite')"><img src="https://cdn-icons-png.flaticon.com/512/179/179539.png"></div>
-        <div class="rank-card" onclick="selectRank(this, 'Legend')"><img src="https://cdn-icons-png.flaticon.com/512/179/179543.png"></div>
+    <label>Макс. звание за 10 сезон (выбери картинку):</label>
+    <div class="rank-grid">
+        <div class="rank-item" onclick="selR(this, 'Silver 1')"><img src="https://placehold.co/40x40?text=S1"></div>
+        <div class="rank-item" onclick="selR(this, 'Silver 2')"><img src="https://placehold.co/40x40?text=S2"></div>
+        <div class="rank-item" onclick="selR(this, 'Silver 3')"><img src="https://placehold.co/40x40?text=S3"></div>
+        <div class="rank-item" onclick="selR(this, 'Silver 4')"><img src="https://placehold.co/40x40?text=S4"></div>
+        <div class="rank-item" onclick="selR(this, 'Gold 1')"><img src="https://placehold.co/40x40?text=G1"></div>
+        <div class="rank-item" onclick="selR(this, 'Gold 2')"><img src="https://placehold.co/40x40?text=G2"></div>
+        <div class="rank-item" onclick="selR(this, 'Gold 3')"><img src="https://placehold.co/40x40?text=G3"></div>
+        <div class="rank-item" onclick="selR(this, 'Gold 4')"><img src="https://placehold.co/40x40?text=G4"></div>
+        <div class="rank-item" onclick="selR(this, 'Phoenix')"><img src="https://placehold.co/40x40?text=PH"></div>
     </div>
 
-    <label class="toggle-label">Есть ли Discord с рабочим микро?</label>
+    <label>Есть Discord с микрофоном?</label>
     <div class="toggle-group">
-        <button class="btn-toggle" id="ds_yes" onclick="setToggle('discord', true)">Да</button>
-        <button class="btn-toggle" id="ds_no" onclick="setToggle('discord', false)">Нет</button>
+        <button class="btn-toggle" id="d_y" onclick="setT('discord', true)">Да</button>
+        <button class="btn-toggle" id="d_n" onclick="setT('discord', false)">Нет</button>
     </div>
 
-    <label class="toggle-label">Возможность играть 7ч+ в неделю?</label>
+    <label>Возможность играть 7ч+ в неделю?</label>
     <div class="toggle-group">
-        <button class="btn-toggle" id="play_yes" onclick="setToggle('playtime', true)">Да</button>
-        <button class="btn-toggle" id="play_no" onclick="setToggle('playtime', false)">Нет</button>
+        <button class="btn-toggle" id="p_y" onclick="setT('playtime', true)">Да</button>
+        <button class="btn-toggle" id="p_n" onclick="setT('playtime', false)">Нет</button>
     </div>
 
     <button id="send_btn">Отправить заявку</button>
@@ -81,40 +83,34 @@
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
+        let res = { rank: "", discord: null, playtime: null };
 
-        let formData = { rank: "", discord: null, playtime: null };
-
-        function selectRank(el, val) {
-            document.querySelectorAll('.rank-card').forEach(c => c.classList.remove('active'));
+        function selR(el, v) {
+            document.querySelectorAll('.rank-item').forEach(i => i.classList.remove('active'));
             el.classList.add('active');
-            formData.rank = val;
+            res.rank = v;
         }
 
-        function setToggle(field, val) {
-            formData[field] = val;
-            const prefix = field === 'discord' ? 'ds_' : 'play_';
-            document.getElementById(prefix + 'yes').className = 'btn-toggle' + (val === true ? ' active-yes' : '');
-            document.getElementById(prefix + 'no').className = 'btn-toggle' + (val === false ? ' active-no' : '');
+        function setT(f, v) {
+            res[f] = v;
+            let p = f === 'discord' ? 'd_' : 'p_';
+            document.getElementById(p+'y').className = 'btn-toggle' + (v?' active-yes':'');
+            document.getElementById(p+'n').className = 'btn-toggle' + (!v?' active-no':'');
         }
 
-        document.getElementById("send_btn").addEventListener("click", () => {
-            let data = {
+        document.getElementById("send_btn").onclick = () => {
+            let d = {
                 name: document.getElementById("full_name").value,
                 game_id: document.getElementById("game_id").value,
                 age: document.getElementById("age").value,
-                rank: formData.rank,
-                discord: formData.discord,
-                playtime: formData.playtime
+                rank: res.rank,
+                discord: res.discord,
+                playtime: res.playtime
             };
-
-            if(!data.name || !data.game_id || !data.rank || data.discord === null) {
-                alert("Заполни все поля и выбери звание!");
-                return;
-            }
-
-            tg.sendData(JSON.stringify(data));
+            if(!d.name || !d.game_id || !d.rank || d.discord === null) return alert("Заполни всё!");
+            tg.sendData(JSON.stringify(d));
             tg.close();
-        });
+        };
     </script>
 </body>
 </html>
