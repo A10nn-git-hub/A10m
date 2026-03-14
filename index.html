@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заявка в A10m</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: var(--tg-theme-bg-color, #18222d);
+            color: var(--tg-theme-text-color, #ffffff);
+            padding: 20px;
+            margin: 0;
+            padding-bottom: 40px;
+        }
+        h2 { text-align: center; margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--tg-theme-hint-color, #aabfe5); }
+        
+        /* Сетка для имени и фамилии рядом */
+        .row { display: flex; gap: 10px; margin-bottom: 15px; }
+        .row > div { flex: 1; }
+        
+        input {
+            width: 100%; padding: 12px; box-sizing: border-box; border-radius: 8px;
+            border: 1px solid var(--tg-theme-hint-color, #526377);
+            background-color: var(--tg-theme-secondary-bg-color, #232e3c);
+            color: var(--tg-theme-text-color, #ffffff); outline: none;
+        }
+        input:focus { border-color: var(--tg-theme-button-color, #2481cc); }
+
+        /* Стиль для кнопок Да/Нет (галочка/крестик) */
+        .toggle-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        .toggle-btn {
+            flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #526377;
+            background: #232e3c; color: white; cursor: pointer; font-size: 18px;
+            transition: 0.2s;
+        }
+        .toggle-btn.active-yes { background: #4CAF50; border-color: #4CAF50; }
+        .toggle-btn.active-no { background: #F44336; border-color: #F44336; }
+
+        /* Сетка для званий */
+        .ranks-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px;
+        }
+        .rank-item {
+            border: 2px solid transparent; border-radius: 10px; padding: 5px;
+            text-align: center; cursor: pointer; transition: 0.2s;
+            background-color: var(--tg-theme-secondary-bg-color, #232e3c);
+        }
+        .rank-item img { width: 100%; border-radius: 8px; pointer-events: none; }
+        .rank-item span { display: block; font-size: 12px; margin-top: 5px; pointer-events: none; }
+        .rank-item.selected { border-color: var(--tg-theme-button-color, #2481cc); background-color: rgba(36, 129, 204, 0.2); }
+
+        /* Главная кнопка */
+        #submitBtn {
+            width: 100%; padding: 15px; border-radius: 10px; border: none;
+            background-color: var(--tg-theme-button-color, #2481cc);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s;
+        }
+        #submitBtn:disabled {
+            background-color: #555555; color: #888888; cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <h2>Заявка в A10m</h2>
+
+    <div class="row">
+        <div>
+            <label>Имя</label>
+            <input type="text" id="fname" placeholder="Иван">
+        </div>
+        <div>
+            <label>Фамилия</label>
+            <input type="text" id="lname" placeholder="Иванов">
+        </div>
+    </div>
+
+    <label>Возраст</label>
+    <input type="number" id="age" placeholder="Например: 16" style="margin-bottom: 15px;">
+
+    <label>Наличие Discord</label>
+    <div class="toggle-group" id="discord-group">
+        <button class="toggle-btn" data-val="yes">✅ Да</button>
+        <button class="toggle-btn" data-val="no">❌ Нет</button>
+    </div>
+
+    <label>Твое звание</label>
+    <div class="ranks-grid" id="ranks-group">
+        <div class="rank-item" data-rank="Бронза 4"><img src="Bronze.png"><span>Бронза 4</span></div>
+        <div class="rank-item" data-rank="Сильвер 4"><img src="Silver.png"><span>Сильвер 4</span></div>
+        <div class="rank-item" data-rank="Голд 4"><img src="Gold.png"><span>Голд 4</span></div>
+        <div class="rank-item" data-rank="Феникс"><img src="Phoenix.png"><span>Феникс</span></div>
+        <div class="rank-item" data-rank="Рейнджер"><img src="Ranger.png"><span>Рейнджер</span></div>
+        <div class="rank-item" data-rank="Чемпион"><img src="Champion.png"><span>Чемп</span></div>
+        <div class="rank-item" data-rank="Мастер"><img src="Master.png"><span>Мастер</span></div>
+        <div class="rank-item" data-rank="Элита"><img src="Elite.png"><span>Элита</span></div>
+        <div class="rank-item" data-rank="Легенда"><img src="TheLegend.png"><span>Легенда</span></div>
+    </div>
+
+    <label>Можешь ли играть 7ч в неделю?</label>
+    <div class="toggle-group" id="playtime-group">
+        <button class="toggle-btn" data-val="yes">✅ Да</button>
+        <button class="toggle-btn" data-val="no">❌ Нет</button>
+    </div>
+
+    <button id="submitBtn" disabled>ОТПРАВИТЬ ЗАЯВКУ АДМИНИСТРАТОРУ</button>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand(); 
+
+        // Переменные для хранения выбранных данных
+        let formData = { fname: "", lname: "", age: "", discord: null, rank: null, playtime: null };
+
+        // Функция проверки: все ли заполнено?
+        function validateForm() {
+            formData.fname = document.getElementById('fname').value.trim();
+            formData.lname = document.getElementById('lname').value.trim();
+            formData.age = document.getElementById('age').value.trim();
+
+            let isValid = formData.fname && formData.lname && formData.age && 
+                          formData.discord !== null && formData.rank !== null && formData.playtime !== null;
+            
+            document.getElementById('submitBtn').disabled = !isValid;
+        }
+
+        // Слушаем ввод текста
+        document.getElementById('fname').addEventListener('input', validateForm);
+        document.getElementById('lname').addEventListener('input', validateForm);
+        document.getElementById('age').addEventListener('input', validateForm);
+
+        // Логика кнопок Да/Нет (Discord)
+        document.querySelectorAll('#discord-group .toggle-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('#discord-group .toggle-btn').forEach(b => {
+                    b.classList.remove('active-yes', 'active-no');
+                });
+                let val = this.getAttribute('data-val');
+                this.classList.add(val === 'yes' ? 'active-yes' : 'active-no');
+                formData.discord = val === 'yes';
+                validateForm();
+            });
+        });
+
+        // Логика кнопок Да/Нет (Время)
+        document.querySelectorAll('#playtime-group .toggle-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('#playtime-group .toggle-btn').forEach(b => {
+                    b.classList.remove('active-yes', 'active-no');
+                });
+                let val = this.getAttribute('data-val');
+                this.classList.add(val === 'yes' ? 'active-yes' : 'active-no');
+                formData.playtime = val === 'yes';
+                validateForm();
+            });
+        });
+
+        // Логика выбора звания
+        document.querySelectorAll('.rank-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.rank-item').forEach(r => r.classList.remove('selected'));
+                this.classList.add('selected');
+                formData.rank = this.getAttribute('data-rank');
+                validateForm();
+            });
+        });
+
+        // Отправка данных
+        document.getElementById('submitBtn').addEventListener('click', () => {
+            tg.sendData(JSON.stringify(formData));
+        });
+    </script>
+</body>
+</html>
