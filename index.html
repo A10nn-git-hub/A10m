@@ -27,12 +27,10 @@
         }
         input:focus { border-color: var(--tg-theme-button-color, #2481cc); }
 
-        /* Блок часов игры */
         .hours-group { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
         .hours-group input { width: 100px; margin-bottom: 0; }
         .hours-group span { font-size: 16px; font-weight: bold; color: var(--tg-theme-text-color, #ffffff); }
 
-        /* Блок дней недели */
         .days-row {
             display: flex; justify-content: space-between; background: var(--tg-theme-secondary-bg-color, #232e3c);
             padding: 15px 10px; border-radius: 8px; border: 1px solid var(--tg-theme-hint-color, #526377);
@@ -49,16 +47,13 @@
         .toggle-btn.active-yes { background: #4CAF50; border-color: #4CAF50; }
         .toggle-btn.active-no { background: #F44336; border-color: #F44336; }
 
-        /* --- НОВЫЙ УЛЬТИМАТИВНЫЙ CSS БЛОК ДЛЯ СЕТКИ И КАРТИНОК --- */
         .ranks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px; }
         .rank-item {
             border: 2px solid transparent; border-radius: 10px; padding: 5px; text-align: center; cursor: pointer; transition: 0.2s;
             background-color: var(--tg-theme-secondary-bg-color, #232e3c);
             aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; overflow: hidden; box-sizing: border-box;
         }
-        .rank-item img {
-            width: 100%; height: 100%; object-fit: contain; border-radius: 8px; pointer-events: none;
-        }
+        .rank-item img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; pointer-events: none; }
         .rank-item.selected { border-color: var(--tg-theme-button-color, #2481cc); background-color: rgba(36, 129, 204, 0.2); }
 
         #submitBtn {
@@ -86,10 +81,13 @@
     </div>
 
     <label>Айди в игре (ID)</label>
-    <input type="number" id="game_id" placeholder="123456789" style="margin-bottom: 15px;" oninput="if(this.value.length > 9) this.value = this.value.slice(0, 9);">
+    <input type="number" id="game_id" placeholder="123456789" style="margin-bottom: 15px;" oninput="if(this.value.length > 9) this.value = this.value.slice(0, 9); if(this.value < 0) this.value = '';">
 
     <label>Возраст</label>
-    <input type="number" id="age" placeholder="Например: 16" style="margin-bottom: 15px;">
+    <input type="number" id="age" placeholder="Например: 16" style="margin-bottom: 15px;" oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2); if(this.value < 0) this.value = '';">
+
+    <label>Макс. звание за 8 сезон</label>
+    <input type="text" id="rank_8" placeholder="Например: Феникс" style="margin-bottom: 15px;">
 
     <label>Наличие Discord</label>
     <div class="toggle-group" id="discord-group">
@@ -97,7 +95,7 @@
         <button class="toggle-btn" data-val="no">❌ Нет</button>
     </div>
 
-    <label>Твое максимальное звание за 10 сезон по любому режиму</label>
+    <label>Макс. звание за 10 сезон по любому режиму</label>
     <div class="ranks-grid" id="ranks-group">
         <div class="rank-item" data-rank="Бронза"><img src="Bronze.png" alt="Bronze"></div>
         <div class="rank-item" data-rank="Сильвер"><img src="Silver.png" alt="Silver"></div>
@@ -112,7 +110,7 @@
 
     <label>Сколько часов в неделю можете играть</label>
     <div class="hours-group">
-        <input type="number" id="playtime_hours" placeholder="10">
+        <input type="number" id="playtime_hours" placeholder="10" oninput="if(this.value < 0) this.value = '';">
         <span>ч.</span>
     </div>
 
@@ -133,31 +131,29 @@
         let tg = window.Telegram.WebApp;
         tg.expand(); 
 
-        let formData = { fname: "", lname: "", game_id: "", age: "", discord: null, rank: null, play_hours: "", days: [] };
+        let formData = { fname: "", lname: "", game_id: "", age: "", rank_8: "", discord: null, rank: null, play_hours: "", days: [] };
 
         function validateForm() {
             formData.fname = document.getElementById('fname').value.trim();
             formData.lname = document.getElementById('lname').value.trim();
             formData.game_id = document.getElementById('game_id').value.trim();
             formData.age = document.getElementById('age').value.trim();
+            formData.rank_8 = document.getElementById('rank_8').value.trim();
             formData.play_hours = document.getElementById('playtime_hours').value.trim();
 
-            // Собираем все отмеченные галочками дни
             let checkedDays = Array.from(document.querySelectorAll('.day-cb:checked')).map(cb => cb.value);
             formData.days = checkedDays;
 
-            let isValid = formData.fname && formData.lname && formData.game_id && formData.age && formData.play_hours &&
+            let isValid = formData.fname && formData.lname && formData.game_id && formData.age && formData.rank_8 && formData.play_hours &&
                           formData.discord !== null && formData.rank !== null && formData.days.length > 0;
             
             document.getElementById('submitBtn').disabled = !isValid;
         }
 
-        // Слушатели ввода
-        ['fname', 'lname', 'game_id', 'age', 'playtime_hours'].forEach(id => {
+        ['fname', 'lname', 'game_id', 'age', 'rank_8', 'playtime_hours'].forEach(id => {
             document.getElementById(id).addEventListener('input', validateForm);
         });
 
-        // Слушатели для галочек дней недели
         document.querySelectorAll('.day-cb').forEach(cb => {
             cb.addEventListener('change', validateForm);
         });
