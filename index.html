@@ -12,9 +12,13 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             
-            /* Фирменный светло-серый фон iOS */
-            background: var(--tg-theme-secondary-bg-color, #F2F2F7); 
-            color: #1C1C1E; /* Почти черный текст для лучшей читаемости */
+            /* --- ИЗМЕНЕНИЕ: Добавили мягкий беловатый свет в нижний правый угол --- */
+            background-color: var(--tg-theme-secondary-bg-color, #F2F2F7); /* Базовый iOS фон */
+            /* Тонкий, почти прозрачный белый градиент. Угол 50% - значит мягкое затухание. */
+            background-image: radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.7) 0%, rgba(242, 242, 247, 0) 50%);
+            background-attachment: fixed; /* Чтобы свет не уезжал при скролле */
+            
+            color: #1C1C1E; 
             padding: 20px; margin: 0; padding-bottom: 40px;
             letter-spacing: -0.01em;
         }
@@ -36,13 +40,12 @@
             margin-bottom: 25px; 
         }
 
-        /* Подписи как в настройках iPhone (серые, заглавные) */
         label { 
             display: block; 
             margin-top: 20px; 
             margin-bottom: 8px; 
             font-weight: 500; 
-            color: #6E6E73; /* Фирменный серый цвет iOS для подписей */
+            color: #6E6E73; 
             font-size: 13px; 
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -53,23 +56,22 @@
         .row > div { flex: 1; }
         .row label { margin-top: 0; } 
         
-        /* --- БЕЛЫЕ КАРТОЧКИ (ПОЛЯ ВВОДА) --- */
         input[type="text"], input[type="number"] {
             width: 100%; padding: 15px 20px; box-sizing: border-box; 
-            border-radius: 16px; /* iOS закругление */
+            border-radius: 16px; 
             border: 1px solid rgba(0, 0, 0, 0.04);
-            background: #FFFFFF; /* Чисто белый фон */
+            background: #FFFFFF; 
             color: #000000; outline: none; 
             font-family: inherit;
             font-size: 17px; 
             letter-spacing: -0.4px;
             font-weight: 500;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02); /* Очень мягкая тень */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02); 
             transition: 0.3s ease;
         }
         input:focus { 
             border-color: #007AFF; 
-            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15); /* Свечение при фокусе */
+            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15); 
         }
         input::placeholder { color: #C7C7CC; font-weight: 400; }
 
@@ -77,10 +79,9 @@
         .hours-group input { width: 120px; margin-bottom: 0; }
         .hours-group span { font-size: 17px; font-weight: 600; color: #1C1C1E; }
 
-        /* --- БЕЛАЯ РАМКА ДЛЯ ДНЕЙ НЕДЕЛИ --- */
         .days-row {
             display: flex; justify-content: space-between; 
-            padding: 16px 20px; margin-bottom: 30px;
+            padding: 166px 20px; margin-bottom: 30px;
             border-radius: 16px;
             border: 1px solid rgba(0, 0, 0, 0.04);
             background: #FFFFFF;
@@ -89,7 +90,6 @@
         .day-col { display: flex; flex-direction: column; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: #1C1C1E; }
         .day-col input[type="checkbox"] { width: 24px; height: 24px; cursor: pointer; accent-color: #007AFF; margin: 0; border-radius: 5px; }
 
-        /* --- КНОПКИ DISCORD --- */
         .toggle-group { display: flex; gap: 15px; margin-bottom: 5px; }
         .toggle-btn {
             flex: 1; padding: 14px; cursor: pointer; transition: 0.3s ease; 
@@ -101,7 +101,6 @@
         .toggle-btn.active-yes { background: #34C759; border-color: #34C759; color: white; box-shadow: 0 4px 15px rgba(52, 199, 89, 0.3); }
         .toggle-btn.active-no { background: #FF3B30; border-color: #FF3B30; color: white; box-shadow: 0 4px 15px rgba(255, 59, 48, 0.3); }
 
-        /* --- КАРТОЧКИ РАНГОВ --- */
         .ranks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 5px; }
         .rank-item {
             padding: 10px; text-align: center; cursor: pointer; transition: 0.3s ease;
@@ -115,7 +114,6 @@
             box-shadow: 0 4px 15px rgba(0, 122, 255, 0.2); transform: scale(1.05);
         }
 
-        /* --- КНОПКА ОТПРАВКИ --- */
         #submitBtn {
             width: 100%; padding: 18px; border: none; border-radius: 16px;
             background-color: #007AFF; color: #ffffff;
@@ -124,15 +122,11 @@
         }
         #submitBtn:disabled { background-color: #E5E5EA; color: #8E8E93; cursor: not-allowed; box-shadow: none; }
 
-        /* --- УВЕДОМЛЕНИЕ (СВЕТЛОЕ МАТОВОЕ СТЕКЛО) --- */
         #ios-toast {
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%) scale(0.9);
-            
-            /* Светлый полупрозрачный фон */
             background: rgba(250, 250, 250, 0.85); 
             backdrop-filter: blur(20px) saturate(180%);
             -webkit-backdrop-filter: blur(20px) saturate(180%);
-            
             border: 1px solid rgba(0, 0, 0, 0.05);
             color: #000000; padding: 14px 24px; border-radius: 100px;
             font-family: inherit; font-size: 15px; font-weight: 600; letter-spacing: -0.2px;
