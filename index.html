@@ -12,11 +12,9 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             
-            /* --- ИЗМЕНЕНИЕ: Добавили мягкий беловатый свет в нижний правый угол --- */
-            background-color: var(--tg-theme-secondary-bg-color, #F2F2F7); /* Базовый iOS фон */
-            /* Тонкий, почти прозрачный белый градиент. Угол 50% - значит мягкое затухание. */
+            background-color: var(--tg-theme-secondary-bg-color, #F2F2F7); 
             background-image: radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.7) 0%, rgba(242, 242, 247, 0) 50%);
-            background-attachment: fixed; /* Чтобы свет не уезжал при скролле */
+            background-attachment: fixed; 
             
             color: #1C1C1E; 
             padding: 20px; margin: 0; padding-bottom: 40px;
@@ -79,9 +77,14 @@
         .hours-group input { width: 120px; margin-bottom: 0; }
         .hours-group span { font-size: 17px; font-weight: 600; color: #1C1C1E; }
 
+        /* --- ИЗМЕНЕНИЕ: Сделали панель дней недели компактнее --- */
         .days-row {
-            display: flex; justify-content: space-between; 
-            padding: 166px 20px; margin-bottom: 30px;
+            display: flex; 
+            justify-content: center; /* Центрируем элементы вместо растягивания по краям */
+            flex-wrap: wrap; /* На случай, если у кого-то очень узкий экран телефона */
+            gap: 12px; /* Компактное расстояние между днями */
+            padding: 16px 20px; /* Исправил случайную опечатку с гигантским отступом */
+            margin-bottom: 30px;
             border-radius: 16px;
             border: 1px solid rgba(0, 0, 0, 0.04);
             background: #FFFFFF;
