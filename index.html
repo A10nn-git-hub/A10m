@@ -6,14 +6,15 @@
     <title>Заявка в A10m</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* --- APPLE ТИПОГРАФИКА И БАЗОВЫЕ СТИЛИ --- */
+        /* --- APPLE ТИПОГРАФИКА И ОБНОВЛЕННЫЙ ТЕМНЫЙ ДИЗАЙН --- */
         body {
-            /* Системный шрифт iOS (San Francisco) */
+            /* Системный шрифт iOS */
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            -webkit-font-smoothing: antialiased; /* Идеальное яблочное сглаживание текста */
+            -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             
-            background: radial-gradient(circle at top left, #2a3b4e, var(--tg-theme-bg-color, #18222d) 70%);
+            /* ЗАМЕНА: Сделали фон намного темнее и убрали яркий градиент */
+            background: var(--tg-theme-bg-color, #10151c);
             background-attachment: fixed;
             color: var(--tg-theme-text-color, #ffffff);
             padding: 20px; margin: 0; padding-bottom: 40px;
@@ -25,23 +26,24 @@
             margin-bottom: 6px; 
             font-weight: 700; 
             font-size: 28px; 
-            letter-spacing: -0.5px; /* Чуть сжатый заголовок в стиле iOS */
+            letter-spacing: -0.5px;
+            text-shadow: 0 1px 10px rgba(0,0,0,0.3);
         }
 
         .warning { 
-            color: #FF3B30; /* Официальный красный цвет iOS */
+            color: #FF3B30; /* iOS Красный */
             font-size: 13px; 
             font-weight: 500;
             text-align: center; 
             margin-bottom: 25px; 
         }
 
-        /* Стиль подписей как в настройках iPhone */
+        /* Стиль подписей (Label) */
         label { 
             display: block; 
             margin-bottom: 8px; 
             font-weight: 600; 
-            color: rgba(255, 255, 255, 0.55); 
+            color: rgba(255, 255, 255, 0.45); /* Чуть темнее */
             font-size: 12px; 
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -51,50 +53,55 @@
         .row { display: flex; gap: 15px; margin-bottom: 20px; }
         .row > div { flex: 1; }
         
-        /* --- СТИЛИ СТЕКЛА ДЛЯ ПОЛЕЙ ВВОДА --- */
+        /* --- ОБНОВЛЕННЫЙ ДИЗАЙН ТЕМНОГО СТЕКЛА --- */
         input[type="text"], input[type="number"] {
             width: 100%; padding: 15px 20px; box-sizing: border-box; 
             border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            background: rgba(255, 255, 255, 0.05); 
+            
+            /* ЗАМЕНА: Уменьшили яркость рамки и фона элемента */
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(0, 0, 0, 0.2); 
+            
             backdrop-filter: blur(20px) saturate(180%);
             -webkit-backdrop-filter: blur(20px) saturate(180%);
             color: var(--tg-theme-text-color, #ffffff); outline: none; 
             
-            /* Наследуем шрифт и ставим 17px (стандарт iOS для полей ввода) */
             font-family: inherit;
             font-size: 17px; 
             letter-spacing: -0.4px;
             font-weight: 500;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
             transition: 0.3s ease;
         }
         input:focus { 
-            border-color: var(--tg-theme-button-color, #007AFF); /* iOS Синий */
-            background: rgba(255, 255, 255, 0.1); 
+            border-color: #007AFF; 
+            background: rgba(0, 0, 0, 0.3); 
             box-shadow: 0 4px 20px rgba(0, 122, 255, 0.3);
         }
-        input::placeholder { color: rgba(255, 255, 255, 0.3); }
+        input::placeholder { color: rgba(255, 255, 255, 0.25); }
 
         .hours-group { display: flex; align-items: center; gap: 10px; margin-bottom: 25px; }
         .hours-group input { width: 120px; margin-bottom: 0; }
-        .hours-group span { font-size: 17px; font-weight: 600; color: rgba(255, 255, 255, 0.8); }
+        .hours-group span { font-size: 17px; font-weight: 600; color: rgba(255, 255, 255, 0.7); }
 
-        /* --- СТЕКЛЯННАЯ РАМКА ДЛЯ ДНЕЙ НЕДЕЛИ --- */
+        /* --- ТЕМНАЯ СТЕКЛЯННАЯ РАМКА ДЛЯ ДНЕЙ НЕДЕЛИ --- */
         .days-row {
             display: flex; justify-content: space-between; 
             padding: 16px 20px; margin-bottom: 30px;
             border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            background: rgba(255, 255, 255, 0.05);
+            
+            /* ЗАМЕНА: Сделали темнее */
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(0, 0, 0, 0.2);
+            
             backdrop-filter: blur(20px) saturate(180%);
             -webkit-backdrop-filter: blur(20px) saturate(180%);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
         }
-        .day-col { display: flex; flex-direction: column; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: rgba(255, 255, 255, 0.8); }
+        .day-col { display: flex; flex-direction: column; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: rgba(255, 255, 255, 0.7); }
         .day-col input[type="checkbox"] { width: 24px; height: 24px; cursor: pointer; accent-color: #007AFF; margin: 0; border-radius: 5px; }
 
-        /* --- СТЕКЛЯННЫЕ КНОПКИ DISCORD --- */
+        /* --- ТЕМНЫЕ КНОПКИ DISCORD --- */
         .toggle-group { display: flex; gap: 15px; margin-bottom: 25px; }
         .toggle-btn {
             flex: 1; padding: 14px; cursor: pointer; transition: 0.3s ease; 
@@ -105,28 +112,33 @@
             letter-spacing: -0.4px;
             
             border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            background: rgba(255, 255, 255, 0.05);
+            
+            /* ЗАМЕНА: Сделали темнее */
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(0, 0, 0, 0.2);
+            
             backdrop-filter: blur(20px) saturate(180%);
             -webkit-backdrop-filter: blur(20px) saturate(180%);
             color: white;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
         }
-        /* Официальные цвета iOS для активных кнопок */
         .toggle-btn.active-yes { background: #34C759; border-color: #34C759; box-shadow: 0 4px 15px rgba(52, 199, 89, 0.4); }
         .toggle-btn.active-no { background: #FF3B30; border-color: #FF3B30; box-shadow: 0 4px 15px rgba(255, 59, 48, 0.4); }
 
-        /* --- СТЕКЛЯННЫЕ КАРТОЧКИ РАНГОВ --- */
+        /* --- ТЕМНЫЕ КАРТОЧКИ РАНГОВ --- */
         .ranks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 35px; }
         .rank-item {
             padding: 10px; text-align: center; cursor: pointer; transition: 0.3s ease;
             aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; overflow: hidden; box-sizing: border-box;
             border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            background: rgba(255, 255, 255, 0.05);
+            
+            /* ЗАМЕНА: Сделали темнее */
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(0, 0, 0, 0.2);
+            
             backdrop-filter: blur(20px) saturate(180%);
             -webkit-backdrop-filter: blur(20px) saturate(180%);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
         }
         .rank-item img { width: 100%; height: 100%; object-fit: contain; border-radius: 12px; pointer-events: none; }
         .rank-item.selected { 
@@ -140,7 +152,7 @@
         #submitBtn {
             width: 100%; padding: 18px; border: none;
             border-radius: 20px;
-            background-color: #007AFF; /* Официальный синий iOS */
+            background-color: #007AFF; 
             color: #ffffff;
             
             font-family: inherit;
@@ -153,14 +165,14 @@
         }
         #submitBtn:disabled { background-color: #3a3a3c; color: #8e8e93; cursor: not-allowed; box-shadow: none; opacity: 0.7; }
 
-        /* --- УВЕДОМЛЕНИЕ В СТИЛЕ iOS --- */
+        /* --- УВЕДОМЛЕНИЕ (ОСТАВИЛИ ЯРКИМ ДЛЯ КОНТРАСТА) --- */
         #ios-toast {
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%) scale(0.9);
-            background: rgba(30, 30, 30, 0.75); 
+            background: rgba(40, 40, 40, 0.85); /* Чуть ярче фона для видимости */
             backdrop-filter: blur(25px) saturate(200%); -webkit-backdrop-filter: blur(25px) saturate(200%);
             border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; padding: 14px 24px; border-radius: 100px;
             font-family: inherit; font-size: 15px; font-weight: 500; letter-spacing: -0.2px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
             transition: top 0.6s cubic-bezier(0.23, 1, 0.32, 1), transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s ease;
             z-index: 9999; text-align: center; width: auto; max-width: calc(100% - 40px); pointer-events: none; opacity: 0;
         }
