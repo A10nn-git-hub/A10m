@@ -63,9 +63,38 @@
             font-weight: bold; font-size: 18px; cursor: pointer; transition: 0.3s;
         }
         #submitBtn:disabled { background-color: #555555; color: #888888; cursor: not-allowed; }
+
+        /* --- СТИЛИ УВЕДОМЛЕНИЯ В ДУХЕ iOS --- */
+        #ios-toast {
+            position: fixed;
+            top: -100px; /* Спрятано за экраном */
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(30, 30, 30, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            color: #fff;
+            padding: 14px 24px;
+            border-radius: 100px; /* Сильное скругление */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-size: 15px;
+            font-weight: 500;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 9999;
+            text-align: center;
+            width: max-content;
+            max-width: 90%;
+            pointer-events: none;
+        }
+        #ios-toast.show {
+            top: 20px; /* Выезжает сверху */
+        }
     </style>
 </head>
 <body>
+    <div id="ios-toast">Ошибка валидации</div>
+
     <h2>Заявка в клан [A10m]</h2>
     <div class="warning">Предупреждение: за обман - бот вас кинет в Черный Список</div>
 
@@ -132,6 +161,43 @@
         tg.expand(); 
 
         let formData = { fname: "", lname: "", game_id: "", age: "", rank_8: "", discord: null, rank: null, play_hours: "", days: [] };
+        let toastTimeout;
+
+        // Функция показа iOS-уведомления
+        function showToast(message) {
+            const toast = document.getElementById('ios-toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000); // Пропадает через 3 секунды
+        }
+
+        // База частых имен, чтобы запретить их писать в поле Фамилия
+        const firstNamesList = [
+            "иван", "александр", "сергей", "андрей", "алексей", "максим", "михаил", "владимир", "николай", 
+            "артем", "даниил", "илья", "кирилл", "антон", "дмитрий", "роман", "евгений", "олег", "павел",
+            "денис", "руслан", "игорь", "вадим", "георгий", "ярослав", "богдан", "марк", "захар", "тимур",
+            "матвей", "глеб", "макар", "арсений", "лев", "степан", "егор", "анна", "мария", "елена", 
+            "дарья", "алина", "полина", "ольга", "юлия", "татьяна", "наталья", "виктория", "екатерина", 
+            "анастасия", "ксения", "валерия", "софия", "александра", "алиса", "ева", "милана", "арина", 
+            "кира", "вероника", "таисия", "маргарита", "василиса", "ульяна"
+        ];
+
+        function isFakeName(name) {
+            // Разрешаем только буквы (русские/английские)
+            const lettersOnlyRegex = /^[а-яА-ЯёЁa-zA-Z]+$/;
+            if (!lettersOnlyRegex.test(name)) return true;
+            
+            // Запрещаем 3 одинаковые буквы подряд (например, "ааа")
+            if (/(.)\1{2,}/.test(name)) return true;
+            
+            if (name.length < 2) return true;
+
+            return false;
+        }
 
         function validateForm() {
             formData.fname = document.getElementById('fname').value.trim();
@@ -144,10 +210,11 @@
             let checkedDays = Array.from(document.querySelectorAll('.day-cb:checked')).map(cb => cb.value);
             formData.days = checkedDays;
 
-            let isValid = formData.fname && formData.lname && formData.game_id && formData.age && formData.rank_8 && formData.play_hours &&
+            // Кнопка активна, если все поля просто не пустые
+            let isFilled = formData.fname && formData.lname && formData.game_id && formData.age && formData.rank_8 && formData.play_hours &&
                           formData.discord !== null && formData.rank !== null && formData.days.length > 0;
             
-            document.getElementById('submitBtn').disabled = !isValid;
+            document.getElementById('submitBtn').disabled = !isFilled;
         }
 
         ['fname', 'lname', 'game_id', 'age', 'rank_8', 'playtime_hours'].forEach(id => {
@@ -178,6 +245,28 @@
         });
 
         document.getElementById('submitBtn').addEventListener('click', () => {
+            let nameToCheck = formData.fname.toLowerCase();
+            let surnameToCheck = formData.lname.toLowerCase();
+
+            // Проверка 1: Несуществующее/глючное имя
+            if (isFakeName(nameToCheck)) {
+                showToast("⚠️ Введено некорректное имя");
+                return; // Останавливаем отправку
+            }
+
+            // Проверка 2: Несуществующая/глючная фамилия
+            if (isFakeName(surnameToCheck)) {
+                showToast("⚠️ Введена некорректная фамилия");
+                return; // Останавливаем отправку
+            }
+
+            // Проверка 3: Если в поле фамилии ввели популярное имя
+            if (firstNamesList.includes(surnameToCheck)) {
+                showToast("⚠️ Похоже, вы ввели имя вместо фамилии");
+                return; // Останавливаем отправку
+            }
+
+            // Если все проверки пройдены:
             try {
                 tg.sendData(JSON.stringify(formData));
                 tg.close();
