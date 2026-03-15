@@ -35,21 +35,21 @@
             margin-bottom: 25px; 
         }
 
-        /* ИСПРАВЛЕНИЕ: Сделали подписи крупными, яркими и читабельными */
+        /* ПОДПИСИ КРУПНЫЕ И ЧИТАБЕЛЬНЫЕ (как просил) */
         label { 
             display: block; 
-            margin-top: 20px; /* Добавили отступ сверху, чтобы блоки не слипались */
+            margin-top: 20px; 
             margin-bottom: 10px; 
             font-weight: 600; 
-            color: rgba(255, 255, 255, 0.95); /* Почти чистый белый цвет! */
-            font-size: 16px; /* Увеличили размер */
+            color: rgba(255, 255, 255, 0.95); /* Яркий белый цвет */
+            font-size: 16px; 
             letter-spacing: 0.2px;
             margin-left: 8px; 
         }
         
         .row { display: flex; gap: 15px; margin-bottom: 5px; }
         .row > div { flex: 1; }
-        .row label { margin-top: 0; } /* Убираем лишний отступ для имени и фамилии */
+        .row label { margin-top: 0; } 
         
         /* --- ТЕМНОЕ СТЕКЛО --- */
         input[type="text"], input[type="number"] {
@@ -124,10 +124,21 @@
         }
         #submitBtn:disabled { background-color: #3a3a3c; color: #8e8e93; cursor: not-allowed; box-shadow: none; opacity: 0.7; }
 
+        /* --- ОБНОВЛЕННОЕ УВЕДОМЛЕНИЕ В СТИЛЕ iOS С НАСТОЯЩИМ БЛЮРОМ --- */
         #ios-toast {
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%) scale(0.9);
-            background: rgba(40, 40, 40, 0.85); backdrop-filter: blur(25px) saturate(200%); -webkit-backdrop-filter: blur(25px) saturate(200%);
-            border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; padding: 14px 24px; border-radius: 100px;
+            
+            /* ЗАМЕНА: Фон стал более прозрачным, серо-бесцветным, чтобы блюр был заметен */
+            background: rgba(80, 80, 80, 0.5); 
+            
+            /* ЗАМЕНА: Уменьшили размытие для более четкого эффекта матового стекла */
+            backdrop-filter: blur(15px) saturate(180%);
+            -webkit-backdrop-filter: blur(15px) saturate(180%);
+            
+            /* ЗАМЕНА: Чуть более заметная белая окантовка для объема */
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            
+            color: #fff; padding: 14px 24px; border-radius: 100px;
             font-family: inherit; font-size: 15px; font-weight: 500; letter-spacing: -0.2px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
             transition: top 0.6s cubic-bezier(0.23, 1, 0.32, 1), transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s ease;
@@ -284,6 +295,7 @@
             let nameToCheck = formData.fname.toLowerCase();
             let surnameToCheck = formData.lname.toLowerCase();
 
+            // ЛОГИКА ОШИБОК С ЭМОДЗИ (как просил)
             if (isFakeName(nameToCheck)) {
                 showToast("⚠️ Введено некорректное имя");
                 return;
