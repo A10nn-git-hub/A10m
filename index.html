@@ -77,21 +77,25 @@
         .hours-group input { width: 120px; margin-bottom: 0; }
         .hours-group span { font-size: 17px; font-weight: 600; color: #1C1C1E; }
 
-        /* --- ИЗМЕНЕНИЕ: Сделали панель дней недели компактнее --- */
+        /* --- ИЗМЕНЕНИЕ: Теперь белая плашка стягивается под размер контента --- */
         .days-row {
             display: flex; 
-            justify-content: center; /* Центрируем элементы вместо растягивания по краям */
-            flex-wrap: wrap; /* На случай, если у кого-то очень узкий экран телефона */
-            gap: 12px; /* Компактное расстояние между днями */
-            padding: 16px 20px; /* Исправил случайную опечатку с гигантским отступом */
-            margin-bottom: 30px;
-            border-radius: 16px;
+            justify-content: center; 
+            flex-wrap: wrap; 
+            gap: 15px; 
+            padding: 14px 22px; 
+            
+            /* Магия здесь: ширина по контенту и авто-отступы по бокам для центрирования */
+            width: fit-content; 
+            margin: 0 auto 30px auto; 
+            
+            border-radius: 20px; /* Чуть более круглая форма для компактности */
             border: 1px solid rgba(0, 0, 0, 0.04);
             background: #FFFFFF;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         }
-        .day-col { display: flex; flex-direction: column; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: #1C1C1E; }
-        .day-col input[type="checkbox"] { width: 24px; height: 24px; cursor: pointer; accent-color: #007AFF; margin: 0; border-radius: 5px; }
+        .day-col { display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #1C1C1E; }
+        .day-col input[type="checkbox"] { width: 22px; height: 22px; cursor: pointer; accent-color: #007AFF; margin: 0; border-radius: 5px; }
 
         .toggle-group { display: flex; gap: 15px; margin-bottom: 5px; }
         .toggle-btn {
@@ -191,7 +195,7 @@
         <span>ч.</span>
     </div>
 
-    <label>Дни недели, когда вы в сети</label>
+    <label style="text-align: center;">Дни недели, когда вы в сети</label>
     <div class="days-row">
         <div class="day-col">ПН<input type="checkbox" value="ПН" class="day-cb"></div>
         <div class="day-col">ВТ<input type="checkbox" value="ВТ" class="day-cb"></div>
